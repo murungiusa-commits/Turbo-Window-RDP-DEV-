@@ -41,10 +41,15 @@ jobs:
       matrix: ${{ fromJson(needs.setup.outputs.matrix) }}
     timeout-minutes: 370
     env:
-      RDP_USER: Bullettemporary
-      RDP_PASS: Bullet@12345
+      RDP_USER: Raytech
+      RDP_PASS: Raymond(12345)
 
     steps:
+      - name: Mask credentials in logs
+        run: |
+          Write-Host "::add-mask::$env:RDP_PASS"
+          Write-Host "Credential masking enabled."
+
       - name: Decide runtime
         run: |
           function Yes($v){ "$v" -match '^(?i:true|1|yes|on)$' }
@@ -78,7 +83,7 @@ jobs:
           }
           Set-ItemProperty "HKLM:\System\CurrentControlSet\Control\Terminal Server" fDenyTSConnections 0
           Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
-          Write-Host "RDP ready: $u / $p @ $env:TAILSCALE_IP"
+          Write-Host "RDP ready: $u (password hidden) @ $env:TAILSCALE_IP"
 
       - name: Install Python libs
         run: |
